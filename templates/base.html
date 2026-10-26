@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>{% block title %}顔文字辞書{% endblock %}</title>
+    {% block head_extra %}{% endblock %}
+</head>
+<body>
+    <main>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class="messages">
+            {% for msg in messages %}
+                <li class="message-success">{{ msg }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

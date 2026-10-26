@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}ローカルお気に入りのバックアップ - 顔文字辞書{% endblock %}
+
+{% block content %}
+    <h1>お気に入りのバックアップ</h1>
+
+    <a href="/">← メニューに戻る</a>
+    <br><br>
+
+    <p>現在のお気に入りを JSON ファイルとしてダウンロードできます。</p>
+
+    <!-- 最終バックアップ日時の表示 -->
+    <p id="backup-time"></p>
+
+     <p>
+        ※ バックアップボタンを押すと、バックアップデータ（JSON）が生成され、バックアップ日時が更新されます。<br>
+        ※ ZIPファイルのダウンロードが正常に完了したかどうかはブラウザ側では確認できないため、ご自身で保存状況をご確認ください。
+    </p>
+
+    <button id="backup-btn" class="btn btn-edit">バックアップをダウンロード</button>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        // ▼ ページ読み込み時にバックアップ日時を表示
+        const lastBackup = localStorage.getItem("local_backup_time");
+        const timeArea = document.getElementById("backup-time");
+
+        if (lastBackup) {
+            timeArea.textContent = `最終バックアップ日時：${lastBackup}`;
+        } else {
+            timeArea.textContent = "バックアップ取得履歴はありません。";
+        }
+
+        document.getElementById("backup-btn").addEventListener("click", () => {
+            // localStorage のデータを取得
+            const fav = JSON.parse(localStorage.getItem("local_fav") || "[]");
+
+            // JSON に変換
+            const json = JSON.stringify(fav, null, 4);
+
+            // Blob を作成
+            const blob = new Blob([json], { type: "application/json" });
+
+            // ダウンロード用 URL を作成
+            const url = URL.createObjectURL(blob);
+
+            // ダウンロードリンクを作成
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "local_fav_backup.json";  // ファイル名
+            a.click();
+
+            // URL を解放
+            URL.revokeObjectURL(url);
+
+            // ▼ バックアップ日時を保存（ISO形式）
+            const now = new Date();
+            const formatted =
+                now.getFullYear() + "-" +
+                String(now.getMonth() + 1).padStart(2, "0") + "-" +
+                String(now.getDate()).padStart(2, "0") + " " +
+                String(now.getHours()).padStart(2, "0") + ":" +
+                String(now.getMinutes()).padStart(2, "0") + ":" +
+                String(now.getSeconds()).padStart(2, "0");
+
+            localStorage.setItem("local_backup_time", formatted);
+
+            // ▼ 表示を更新
+            timeArea.textContent = `最終バックアップ日時：${formatted}`;
+
+        });
+    </script>
+{% endblock %}

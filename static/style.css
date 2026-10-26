@@ -1,0 +1,432 @@
+/* ==========================================================
+   デザイントークン（色・角丸・影はここだけ直せば全画面に反映）
+   ========================================================== */
+:root {
+    /* アクセント（ミントブルー） */
+    --accent: #4FD1C5;
+    --accent-hover: #38BDB0;
+    --accent-soft: #E6F8F6;
+    --on-accent: #06403A;      /* ミント背景の上に載せる文字色（白だとコントラスト不足） */
+    --link: #0E8F84;
+    --accent-text: #0A6F66;    /* 薄いミント背景の上に載せる文字色 */
+    --accent-border: #BDEBE5;
+    --accent-soft-hover: #D3F1ED;
+
+    /* ベース */
+    --bg: #F3F7F8;
+    --surface: #FFFFFF;
+    --text: #1F2A30;
+    --text-sub: #6B7A83;
+    --border: #E1E8EB;
+
+    /* 削除・エラー */
+    --danger: #E5535F;
+    --danger-hover: #D13F4B;
+    --on-danger: #FFFFFF;
+    --danger-text: #C0343F;
+    --danger-soft: #FDECEE;
+    --danger-soft-hover: #FAD9DC;
+    --danger-border: #F7CDD1;
+
+    /* お気に入り（アンバー） */
+    --favorite: #F5A524;
+    --favorite-hover: #E09400;
+    --favorite-text: #92610A;
+    --favorite-soft: #FFF4E0;
+    --favorite-soft-hover: #FCE8C4;
+    --favorite-border: #F6DBA3;
+
+    /* 編集（ブルー） */
+    --edit: #5B8DEF;
+    --edit-hover: #4576D9;
+    --edit-text: #2F5AA8;
+    --edit-soft: #EAF2FF;
+    --edit-soft-hover: #D6E6FE;
+    --edit-border: #C3D9FA;
+
+    /* 成功 */
+    --success: #0E8F84;
+
+    /* 形 */
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow: 0 1px 3px rgba(31, 42, 48, 0.08);
+    --shadow-lg: 0 4px 14px rgba(31, 42, 48, 0.12);
+}
+
+/* ==========================================================
+   ベース
+   ========================================================== */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0 auto;
+    padding: 24px 16px 48px;
+    max-width: 720px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Meiryo", system-ui, sans-serif;
+    line-height: 1.6;
+}
+
+h1 {
+    font-size: 1.5rem;
+    margin: 0 0 16px;
+}
+
+h2 {
+    font-size: 1.1rem;
+    margin: 24px 0 12px;
+    color: var(--text);
+}
+
+a {
+    color: var(--link);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 20px 0;
+}
+
+/* ==========================================================
+   入力欄
+   ========================================================== */
+input[type="text"],
+input[type="password"],
+textarea,
+select {
+    width: 100%;
+    max-width: 100%;
+    padding: 10px 14px;
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+/* 検索フォーム：入力欄とボタンの間に常に余白を確保する
+   （入力欄は幅100%のため、何もしないとボタンが真下に密着してしまう） */
+.search-form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.search-form input[type="text"] {
+    flex: 1 1 220px;
+    width: auto;
+}
+
+.search-form button,
+.search-form .btn {
+    margin-left: 0;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+/* ==========================================================
+   ボタン（<button> と <a class="btn"> の両方に使う）
+   ========================================================== */
+/* 通常のボタン：薄いミント背景＋枠線（控えめ） */
+button,
+.btn {
+    display: inline-block;
+    min-height: 36px;
+    padding: 6px 16px;
+    margin-left: 8px;
+    background: var(--accent-soft);
+    color: var(--accent-text);
+    border: 1px solid var(--accent-border);
+    border-radius: var(--radius-sm);
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+button:hover,
+.btn:hover {
+    background: var(--accent-soft-hover);
+    text-decoration: none;
+}
+
+/* メインのボタン：ベタ塗りミント（ページの主役の操作だけに使う） */
+.btn-primary {
+    background: var(--accent);
+    color: var(--on-accent);
+    border-color: var(--accent);
+}
+
+.btn-primary:hover {
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
+}
+
+/* 削除ボタン：ベタ塗りの赤（確認画面の実行ボタン用） */
+.btn-danger {
+    background: var(--danger);
+    color: var(--on-danger);
+    border-color: var(--danger);
+}
+
+.btn-danger:hover {
+    background: var(--danger-hover);
+    border-color: var(--danger-hover);
+}
+
+/* お気に入りボタン：コピーとは別系統の色（アンバー）で区別する */
+.btn-favorite {
+    background: var(--favorite-soft);
+    color: var(--favorite-text);
+    border-color: var(--favorite-border);
+}
+
+.btn-favorite:hover {
+    background: var(--favorite-soft-hover);
+}
+
+/* 編集ボタン：コピー・お気に入りと同じ「薄い塗り＋縁取り」トーンで、ブルー系で区別する */
+.btn-edit {
+    background: var(--edit-soft);
+    color: var(--edit-text);
+    border-color: var(--edit-border);
+}
+
+.btn-edit:hover {
+    background: var(--edit-soft-hover);
+}
+
+/* ==========================================================
+   一覧（顔文字1件ずつをカード表示）
+   ========================================================== */
+/* 顔文字を1件ずつカード表示する一覧共通クラス。
+   新しく一覧を追加するときは、この class を <ul> に付けるだけで
+   同じ見た目（カード・影・ボタン右寄せ・控えめな配色）になる。 */
+.kaomoji-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.kaomoji-list li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+/* カード内のボタンは左余白をリセット（gap で間隔を取る） */
+.kaomoji-list li button,
+.kaomoji-list li .btn {
+    margin-left: 0;
+}
+
+/* カード内のボタン群を右端に揃える（先頭のボタンが余白を吸って、後続も一緒に右へ寄る） */
+.kaomoji-list li > :first-child:not(.drag-handle),
+.kaomoji-list li > .drag-handle + * {
+    margin-left: auto;
+}
+
+/* 並び替え用のつかむ部分（ここをドラッグしたときだけ並び替えが動く） */
+.drag-handle {
+    flex-shrink: 0;
+    width: 28px;           /* 指で触りやすいよう、見た目より広く当たり判定を取る */
+    height: 36px;
+    margin-right: 6px;
+    padding: 0 5px;
+    background: radial-gradient(circle, var(--text-sub) 1.6px, transparent 2px) 0 0 / 9px 12px;
+    background-origin: content-box;
+    background-clip: content-box;
+    cursor: grab;
+    touch-action: none;    /* スマホでこの部分を触ったときは、スクロールでなくドラッグとして扱う */
+    opacity: 0.6;
+}
+
+.drag-handle:hover {
+    opacity: 1;
+}
+
+.drag-handle:active {
+    cursor: grabbing;
+}
+
+/* 一覧内の削除ボタンは、ベタ塗りではなく薄い赤で控えめに */
+.kaomoji-list li .btn-danger {
+    background: var(--danger-soft);
+    color: var(--danger-text);
+    border-color: var(--danger-border);
+}
+
+.kaomoji-list li .btn-danger:hover {
+    background: var(--danger-soft-hover);
+}
+
+/* 並び替え中の見た目 */
+.sortable-ghost {
+    opacity: 0.4;
+    background: var(--accent-soft);
+}
+
+/* ==========================================================
+   メッセージ・通知
+   ========================================================== */
+.messages {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 16px;
+}
+
+.message-success {
+    color: var(--success);
+}
+
+.message-error {
+    color: var(--danger);
+}
+
+.toast-notification {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 20px;
+    background: var(--surface);
+    color: var(--success);
+    border: 1px solid var(--accent);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg);
+    z-index: 1000;
+}
+
+/* ==========================================================
+   メインメニュー
+   ========================================================== */
+.menu-heading {
+    margin: 28px 0 10px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--text-sub);
+}
+
+.menu-heading-admin {
+    color: var(--edit-text);
+}
+
+.menu-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 8px;
+}
+
+/* 行全体をタップできるカード風リンク */
+.menu-list li a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 52px;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    font-weight: 600;
+    transition: background 0.15s;
+}
+
+.menu-list li a::after {
+    content: "\203A";
+    flex-shrink: 0;
+    margin-left: 12px;
+    font-size: 1.3rem;
+    line-height: 1;
+    color: var(--text-sub);
+}
+
+.menu-list li a:hover {
+    background: var(--accent-soft);
+    text-decoration: none;
+}
+
+/* 管理者向け：左の縁をブルーにして、一般向けと見分けられるようにする */
+.menu-list-admin li a {
+    border-left: 4px solid var(--edit);
+}
+
+.menu-list-admin li a:hover {
+    background: var(--edit-soft);
+}
+
+/* ログアウトは赤系で控えめに */
+.menu-list .menu-logout a {
+    background: var(--danger-soft);
+    color: var(--danger-text);
+    border-color: var(--danger-border);
+}
+
+.menu-list .menu-logout a:hover {
+    background: var(--danger-soft-hover);
+}
+
+/* ==========================================================
+   ログインフォーム
+   ========================================================== */
+.login-container {
+    max-width: 320px;
+    margin: 48px auto 0;
+    padding: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.login-container h2 {
+    text-align: center;
+    margin: 0 0 20px;
+}
+
+.login-container .message-error {
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.login-container input[type="text"],
+.login-container input[type="password"] {
+    margin-bottom: 12px;
+}
+
+.login-container button {
+    width: 100%;
+    margin-left: 0;
+}

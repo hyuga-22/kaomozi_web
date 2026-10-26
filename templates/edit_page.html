@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}顔文字編集 - 顔文字辞書{% endblock %}
+
+{% block content %}
+    <h1>顔文字編集</h1>
+
+    <p><strong>現在の名前：</strong> {{ name }}</p>
+    <p><strong>現在の顔文字：</strong> {{ face }}</p>
+
+    <hr>
+
+    <form action="/edit/{{ name }}" method="POST">
+        <p>
+            新しい名前：<br>
+            <input type="text" name="new_name" placeholder="変更しない場合は空欄のまま">
+        </p>
+
+        <p>
+            新しい顔文字：<br>
+            <input type="text" name="new_face" placeholder="変更しない場合は空欄のまま">
+        </p>
+
+        <button type="submit" class="btn btn-edit">確認へ進む</button>
+    </form>
+
+    <br>
+
+    {% if error %}
+        <p class="message-error">{{ error }}</p>
+    {% endif %}
+
+    <br>
+
+    <a href="/edit_select">← 編集選択に戻る</a>
+{% endblock %}

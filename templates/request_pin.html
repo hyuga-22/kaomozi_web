@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}リクエスト管理者ページ PIN入力 - 顔文字辞書{% endblock %}
+
+{% block content %}
+    <h1>リクエスト(管理者)ページに入るには PIN が必要です</h1>
+
+    <form action="/request_pin_check" method="post">
+        <p>パスコードを入力してください：</p>
+        <input type="password" name="pin" required>
+        <br><br>
+        <button type="submit" class="btn btn-edit">管理者ページへ進む</button>
+    </form>
+
+    <br>
+    <a href="/">← メニューに戻る</a>
+{% endblock %}

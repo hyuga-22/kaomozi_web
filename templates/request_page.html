@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}リクエスト / フィードバック - 顔文字辞書{% endblock %}
+
+{% block content %}
+    <h1>リクエスト / フィードバック</h1>
+
+    <a href="/">← メニューに戻る</a>
+    <br><br>
+
+    {% if error %}
+        <p class="message-error">{{ error }}</p>
+    {% endif %}
+
+    <form action="/send_request" method="post" onsubmit="return checkAtLeastOne();">
+        <p>追加してほしい顔文字の名称（任意）</p>
+        <input type="text" name="name">
+
+        <p>追加してほしい顔文字（任意）</p>
+        <input type="text" name="kaomozi">
+
+        <p>コメント / フィードバック（任意）</p>
+        <textarea name="comment" rows="4" cols="40"></textarea>
+
+        <p>評価（任意）</p>
+        <select name="rating">
+            <option value="">選択なし</option>
+            <option value="1">★1</option>
+            <option value="2">★2</option>
+            <option value="3">★3</option>
+            <option value="4">★4</option>
+            <option value="5">★5</option>
+        </select>
+
+        <br><br>
+        <button type="submit" class="btn btn-primary">送信する</button>
+    </form>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        function checkAtLeastOne() {
+            const name = document.querySelector('input[name="name"]').value.trim();
+            const kaomozi = document.querySelector('input[name="kaomozi"]').value.trim();
+            const comment = document.querySelector('textarea[name="comment"]').value.trim();
+            const rating = document.querySelector('select[name="rating"]').value.trim();
+
+            if (!name && !kaomozi && !comment && !rating) {
+                alert("いずれか1項目は入力してください。");
+                return false;
+            }
+            return true;
+        }
+    </script>
+{% endblock %}

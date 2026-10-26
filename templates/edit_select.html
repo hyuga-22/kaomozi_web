@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}顔文字を編集 - 顔文字辞書{% endblock %}
+
+{% block content %}
+    <h1>編集する顔文字を選ぶ</h1>
+
+    <!-- メニューに戻る -->
+    <p><a href="/">← メニューに戻る</a></p>
+
+    <!-- 検索フォーム -->
+    <form action="/edit_select" method="POST" class="search-form">
+        <input type="text" name="keyword" placeholder="名前 or 顔文字で検索">
+        <button type="submit" class="btn btn-edit">検索</button>
+    </form>
+
+    <hr>
+
+    <ul class="kaomoji-list">
+        {% for name, face in results.items() %}
+            <li>
+                {{ name }} : {{ face }}
+                <a href="/edit/{{ name }}" class="btn btn-edit">編集する</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

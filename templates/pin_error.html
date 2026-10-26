@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}パスコードエラー - 顔文字辞書{% endblock %}
+
+{% block content %}
+    <h1>パスコードが正しくありません</h1>
+
+    <p>入力されたパスコードが間違っています。もう一度お試しください。</p>
+
+    <a href="{{ return_url }}">← 元のページに戻る</a>
+{% endblock %}

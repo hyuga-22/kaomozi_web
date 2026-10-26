@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}顔文字登録 - 顔文字辞書{% endblock %}
+
+{% block content %}
+    <h1>顔文字を登録する</h1>
+
+    <form action="/add" method="POST">
+        <input type="text" name="name" placeholder="名前" required maxlength="20">
+        <br></br>
+        <input type="text" name="kaomozi" placeholder="顔文字" required maxlength="50">
+        <br></br>
+        <button type="submit" class="btn btn-edit">登録</button>
+    </form>
+
+    {% if error %}
+        <p class="message-error">{{ error }}</p>
+    {% endif %}
+
+    {% if success %}
+        <p class="message-success">{{ success }}</p>
+    {% endif %}
+
+    <br>
+    <a href="/">← 一覧に戻る</a>
+{% endblock %}

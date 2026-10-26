@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+
+{% block title %}顔文字一覧 - 顔文字辞書{% endblock %}
+
+{% block head_extra %}
+    <!-- SortableJS 読み込み -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+{% endblock %}
+
+{% block content %}
+    <h1>顔文字一覧</h1>
+
+    <a href="/">← メニューに戻る</a>
+    {% if logged_in %}
+        <p><a href="/favorite">お気に入りを見る</a></p>
+    {% else %}
+        <p><a href="/favorite_local">ローカルお気に入りを見る</a></p>
+    {% endif %}
+
+    <br><br>
+
+    <!-- 検索ボックス（ライブ検索） -->
+    <input type="text" id="search" placeholder="名前 or 顔文字で検索" style="padding:5px; width: 250px;">
+
+    <hr>
+
+    <!-- 検索結果（入力時のみ表示、全一覧には影響しない） -->
+    <div id="search-results-section" style="display:none;">
+        <h2>検索結果</h2>
+        <p id="no-result-msg" style="display:none;">該当する顔文字はありません。</p>
+        <ul id="search-results-list" class="kaomoji-list"></ul>
+    </div>
+
+    <hr>
+
+    <!-- 全一覧（常に表示） -->
+    <h2>全顔文字一覧</h2>
+    <ul id="kaomozi-list" class="kaomoji-list">
+        {% for key, value in kaomozi.items() %}
+            <li data-name="{{ key }}" data-face="{{ value }}">
+                {% if logged_in %}<span class="drag-handle" title="ドラッグで並び替え"></span>{% endif %}
+                {{ key }} : {{ value }}
+                <button class="copy-btn btn" data-face="{{ value }}">コピー</button>
+
+                {% if logged_in %}
+                    <form action="/favorite/add/{{ key }}" method="POST" style="display:inline;">
+                        <button type="submit" class="btn btn-favorite">お気に入り</button>
+                    </form>
+                {% else %}
+                    <button type="button" class="local-fav-btn btn btn-favorite" data-name="{{ key }}" data-face="{{ value }}">お気に入り</button>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        const isLoggedIn = {{ 'true' if logged_in else 'false' }};
+        // ------------------------------
+        // コピー機能（イベント委譲：後から追加される検索結果にも対応）
+        // ------------------------------
+        document.body.addEventListener("click", (e) => {
+            if (!e.target.classList.contains("copy-btn")) return;
+            copyToClipboard(e.target.dataset.face)
+                .then(() => alert("コピーしました！"))
+                .catch(() => alert("コピーに失敗しました"));
+        });
+
+        // ------------------------------
+        // ローカルお気に入り追加（イベント委譲）
+        // ------------------------------
+        document.body.addEventListener("click", (e) => {
+            if (!e.target.classList.contains("local-fav-btn")) return;
+
+            const btn = e.target;
+            const name = btn.dataset.name;
+            const face = btn.dataset.face;
+
+            let fav = JSON.parse(localStorage.getItem("local_fav") || "[]");
+
+            if (!fav.some(item => item.name === name)) {
+                fav.push({ name: name, face: face });
+                const json = JSON.stringify(fav);
+                localStorage.setItem("local_fav", json);
+                localStorage.setItem("local_fav_backup", json);
+                alert("お気に入りに追加しました！");
+            } else {
+                alert("すでにお気に入りに入っています！");
+            }
+        });
+
+        // ------------------------------
+        // ライブ検索
+        // ------------------------------
+        const allItems = [...document.querySelectorAll("#kaomozi-list li")].map(li => ({
+            name: li.dataset.name,
+            face: li.dataset.face
+        }));
+
+        const searchInput = document.getElementById("search");
+        const resultsSection = document.getElementById("search-results-section");
+        const resultsList = document.getElementById("search-results-list");
+        const noResultMsg = document.getElementById("no-result-msg");
+
+        searchInput.addEventListener("keyup", () => {
+            const keyword = searchInput.value.toLowerCase().trim();
+
+            if (keyword === "") {
+                resultsSection.style.display = "none";
+                return;
+            }
+
+            resultsSection.style.display = "block";
+            resultsList.innerHTML = "";
+
+            const matches = allItems.filter(item =>
+                item.name.toLowerCase().includes(keyword) || item.face.toLowerCase().includes(keyword)
+            );
+
+            if (matches.length === 0) {
+                noResultMsg.style.display = "block";
+            } else {
+                noResultMsg.style.display = "none";
+
+                matches.forEach(item => {
+                    const li = document.createElement("li");
+                    li.textContent = `${item.name} : ${item.face} `;
+
+                    // コピーボタン
+                    const copyBtn = document.createElement("button");
+                    copyBtn.textContent = "コピー";
+                    copyBtn.className = "btn copy-btn";
+                    copyBtn.dataset.face = item.face;
+                    li.appendChild(copyBtn);
+
+                    // お気に入りボタン（ログイン状態で分岐）
+                    if (isLoggedIn) {
+                        const form = document.createElement("form");
+                        form.action = `/favorite/add/${encodeURIComponent(item.name)}`;
+                        form.method = "POST";
+                        form.style.display = "inline";
+
+                        const favBtn = document.createElement("button");
+                        favBtn.type = "submit";
+                        favBtn.className = "btn btn-favorite";
+                        favBtn.textContent = "お気に入り";
+
+                        form.appendChild(favBtn);
+                        li.appendChild(form);
+                    } else {
+                        const favBtn = document.createElement("button");
+                        favBtn.type = "button";
+                        favBtn.className = "local-fav-btn btn";
+                        favBtn.dataset.name = item.name;
+                        favBtn.dataset.face = item.face;
+                        favBtn.textContent = "お気に入り";
+                        li.appendChild(favBtn);
+                    }
+
+                    resultsList.appendChild(li);
+                });
+            }
+        });
+    </script>
+
+    {% if logged_in %}
+    <script>
+        // 並び替え機能（管理者のみ）
+        const el = document.getElementById('kaomozi-list');
+        Sortable.create(el, {
+            handle: '.drag-handle',
+            animation: 150,
+            onEnd: function () {
+                const items = [...el.querySelectorAll('li')].map(li => li.dataset.name);
+
+                fetch("/list/reorder", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ order: items })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status !== "ok") {
+                        alert("並び順の保存に失敗しました。");
+                    }
+                })
+                .catch(() => {
+                    alert("並び順の保存中にエラーが発生しました。");
+                });
+            }
+        });
+    </script>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+
+{% block title %}ローカルお気に入り - 顔文字辞書{% endblock %}
+
+{% block head_extra %}
+    <!-- SortableJS 読み込み -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+{% endblock %}
+
+{% block content %}
+    <h1>お気に入り一覧</h1>
+
+    <a href="/">← メニューに戻る</a>
+    <br><br>
+    <!-- 検索フォーム -->
+    <input type="text" id="search" placeholder="名前 or 顔文字で検索" style="padding:5px; width: 250px;">
+
+    <br><br>
+
+    <!-- 復元ボタン・メッセージ -->
+    <button id="restore-btn" style="display:none;">バックアップから復元</button>
+
+    <p id="restore-msg" style="color:red; display:none;">
+        ※データが正しく保存できなかった可能性があります。<br>
+        バックアップから復元ボタンを押すことで、以前の状態に戻せます。
+    </p>
+
+    <p id="sort-hint" class="hint" style="display:none;">左端の「⋮⋮」をドラッグすると、並び替えができます！</p>
+
+    <ul id="fav-list" class="kaomoji-list"></ul>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        function saveLocalFavoritesSafely(newOrder) {
+            try {
+                localStorage.setItem("local_fav", JSON.stringify(newOrder));
+
+                // 保存後に読み込みチェック
+                const check = JSON.parse(localStorage.getItem("local_fav"));
+                if (!check || check.length !== newOrder.length) {
+                    throw new Error("保存内容が一致しません");
+                }
+
+                return true;
+
+            } catch (e) {
+                console.error("ローカルお気に入り保存失敗:", e);
+                return false;
+            }
+        }
+
+        function restoreLocalFavorites() {
+            const backup = localStorage.getItem("local_fav_backup");
+            if (backup) {
+                localStorage.setItem("local_fav", backup);
+                alert("バックアップから復元しました！");
+                location.reload();
+            } else {
+                alert("バックアップがありません。");
+            }
+        }
+
+        // 復元ボタンの表示制御
+        const restoreBtn = document.getElementById("restore-btn");
+        const backup = localStorage.getItem("local_fav_backup");
+        const current = localStorage.getItem("local_fav");
+
+        // バックアップが存在し、かつ内容が違う場合だけ表示
+        if (backup && backup !== current) {
+            restoreBtn.style.display = "inline-block";
+        }
+
+        restoreBtn.addEventListener("click", restoreLocalFavorites);
+
+        // 復元ボタンがある時のメッセージ制御
+        const restoreMsg = document.getElementById("restore-msg");
+
+        if (backup && backup !== current) {
+            restoreBtn.style.display = "inline-block";
+            restoreMsg.style.display = "block";   // ← メッセージも表示
+        }
+
+        // 🔍 検索機能
+        const searchInput = document.getElementById("search");
+
+        searchInput.addEventListener("keyup", () => {
+            const keyword = searchInput.value.toLowerCase();
+
+            // すべての li を取得
+            document.querySelectorAll("#fav-list li").forEach(li => {
+                const name = li.dataset.name.toLowerCase();
+                const face = li.dataset.face ? li.dataset.face.toLowerCase() : "";
+
+                // 名前 or 顔文字 に keyword が含まれていれば表示
+                if (name.includes(keyword) || face.includes(keyword)) {
+                    li.style.display = "";
+                } else {
+                    li.style.display = "none";
+                }
+            });
+        });
+    </script>
+
+    <script>
+        // ローカルお気に入りを読み込む（{name, face} の配列）
+        let fav = JSON.parse(localStorage.getItem("local_fav") || "[]");
+        const ul = document.getElementById("fav-list");
+
+        // お気に入りが空の場合
+        if (fav.length === 0) {
+            ul.innerHTML = "<p>お気に入りはありません。</p>";
+        } else {
+            document.getElementById("sort-hint").style.display = "";
+            fav.forEach(item => {
+                const li = document.createElement("li");
+                li.dataset.name = item.name;  // 並び替え用
+                li.dataset.face = item.face;   // ← 追加！
+                li.textContent = `${item.name} : ${item.face} `;
+
+                // 並び替え用のつかむ部分
+                const handle = document.createElement("span");
+                handle.className = "drag-handle";
+                handle.title = "ドラッグで並び替え";
+                li.prepend(handle);
+
+                // コピーボタン（顔文字をコピー）
+                const copyBtn = document.createElement("button");
+                copyBtn.className = "btn";
+                copyBtn.textContent = "コピー";
+                copyBtn.onclick = () => {
+                    copyToClipboard(item.face)
+                        .then(() => alert("コピーしました！"))
+                        .catch(() => alert("コピーに失敗しました"));
+                    };
+
+                // 削除ボタン
+                const delBtn = document.createElement("button");
+                delBtn.className = "btn btn-danger";
+                delBtn.textContent = "削除";
+                delBtn.onclick = () => {
+                        // 削除確認ダイアログ（名前 + 顔文字）
+                        if (!confirm(`「${item.name} : ${item.face}」をお気に入りから削除しますか？`)) {
+                            return; // キャンセルしたら削除しない
+                        }
+                        const newFav = fav.filter(f => f.name !== item.name);
+                        const json = JSON.stringify(newFav);
+                        localStorage.setItem("local_fav", json);
+                        localStorage.setItem("local_fav_backup", json);
+                        location.reload();
+                    };
+
+                li.appendChild(copyBtn);
+                li.appendChild(delBtn);
+                ul.appendChild(li);
+            });
+        }
+
+        // 並び替え機能（一般ユーザー用）
+        Sortable.create(ul, {
+            handle: '.drag-handle',
+            animation: 150,
+            onEnd: function () {
+
+                // ① 並び替え前の状態を一時的に保持（保存失敗時のロールバック用）
+                const previousFavJson = JSON.stringify(fav);
+
+                // ② 並び替え後の順番に合わせて fav を再構築
+                const items = [...ul.querySelectorAll('li')].map(li => {
+                    return fav.find(f => f.name === li.dataset.name);
+                });
+
+                // ③ 安全に保存
+                const ok = saveLocalFavoritesSafely(items);
+
+                if (!ok) {
+                    // 保存に失敗した場合だけ、直前の状態を backup として残す
+                    localStorage.setItem("local_fav_backup", previousFavJson);
+                    alert("並び順の保存に失敗しました。バックアップから復元できます。");
+                } else {
+                    // 成功した場合は backup も最新状態に同期する（誤警告防止）
+                    localStorage.setItem("local_fav_backup", JSON.stringify(items));
+                    fav = items;  // 即反映
+                }
+            }
+        });
+    </script>
+{% endblock %}

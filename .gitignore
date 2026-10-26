@@ -1,0 +1,22 @@
+# 環境変数（秘密情報）
+.env
+
+# 管理者情報・来訪者のリクエスト・バックアップ（公開しない）
+data/admin.json
+data/request.json
+data/backup.zip
+data/backup_info.json
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# アプリが書き込み中に作る一時ファイル
+*.tmp
+
+# OS・エディタ
+.DS_Store
+Thumbs.db
+.vscode/

@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}顔文字を削除 - 顔文字辞書{% endblock %}
+
+{% block head_extra %}
+    <style>
+        .accordion-content {
+            display: none;
+            margin-top: 10px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <h1>削除する顔文字を選んでください</h1>
+
+    <a href="/">← メニューに戻る</a>
+    <br><br>
+
+    <!-- 検索フォーム -->
+    <form action="/delete_select" method="POST" class="search-form">
+        <input type="text" name="keyword" placeholder="名前 or 顔文字で検索" required>
+        <button type="submit" class="btn btn-edit">検索</button>
+    </form>
+
+    {% if error %}
+        <p class="message-error">{{ error }}</p>
+    {% endif %}
+
+    <hr>
+
+    <!-- 検索結果（1回だけ表示） -->
+    <h2>検索結果</h2>
+    {% if results %}
+        <ul class="kaomoji-list">
+            {% for key, value in results.items() %}
+                <li>
+                    {{ key }} : {{ value }}
+                    <a href="/delete_confirm/{{ key }}" class="btn btn-danger">削除</a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>検索結果はありません。</p>
+    {% endif %}
+
+    <hr>
+
+    <!-- アコーディオンボタン -->
+    <button onclick="toggleAccordion()" class="btn btn-edit">顔文字一覧を表示(削除機能あり)</button>
+
+    <!-- 一覧（アコーディオン） -->
+    <div id="accordion" class="accordion-content">
+        <h2>全顔文字一覧</h2>
+        <ul class="kaomoji-list">
+            {% for key, value in all_data.items() %}
+                <li>
+                    {{ key }} : {{ value }}
+                    <a href="/delete_confirm/{{ key }}" class="btn btn-danger">削除</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        function toggleAccordion() {
+            const box = document.getElementById("accordion");
+            box.style.display = (box.style.display === "block") ? "none" : "block";
+        }
+    </script>
+{% endblock %}

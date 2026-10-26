@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}ローカルお気に入りの復元 - 顔文字辞書{% endblock %}
+
+{% block content %}
+    <h1>お気に入りの復元</h1>
+
+    <a href="/">← メニューに戻る</a>
+    <br><br>
+
+    <p>バックアップした JSON ファイルを選択すると、お気に入りに追加されます。</p>
+
+    <input type="file" id="file-input" accept="application/json">
+    <br><br>
+
+    <button id="restore-btn" class="btn btn-edit">復元する</button>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        document.getElementById("restore-btn").addEventListener("click", () => {
+            const fileInput = document.getElementById("file-input");
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert("JSONファイルを選択してください。");
+                return;
+            }
+
+            const reader = new FileReader();
+
+            reader.onload = (event) => {
+                try {
+                    // アップロードされた JSON を読み込む
+                    const uploadedData = JSON.parse(event.target.result);
+
+                    if (!Array.isArray(uploadedData)) {
+                        alert("JSON形式が正しくありません。");
+                        return;
+                    }
+
+                    // 現在の localStorage のデータ
+                    let currentFav = JSON.parse(localStorage.getItem("local_fav") || "[]");
+
+                    // マージ処理（重複は追加しない）
+                    uploadedData.forEach(item => {
+                        if (!currentFav.some(f => f.name === item.name)) {
+                            currentFav.push(item);
+                        }
+                    });
+
+                    // 保存
+                    localStorage.setItem("local_fav", JSON.stringify(currentFav));
+
+                    alert("復元が完了しました！");
+                    window.location.href = "/favorite_local";  // 一覧ページへ戻る
+
+                } catch (e) {
+                    alert("JSONの読み込みに失敗しました。");
+                }
+            };
+
+            reader.readAsText(file);
+        });
+    </script>
+{% endblock %}

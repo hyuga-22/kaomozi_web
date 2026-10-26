@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}メニュー - 顔文字辞書{% endblock %}
+
+{% block content %}
+    <h1>Flaskozi ω・´ - 顔文字辞書</h1>
+
+    <h2 class="menu-heading">( */・ω・)/顔文字を使う</h2>
+    <ul class="menu-list">
+        <li><a href="/list">📘 顔文字一覧・検索</a></li>
+        <li><a href="/favorite_local">⭐ お気に入り</a></li>
+    </ul>
+
+    <h2 class="menu-heading">φ(･ω･*)お気に入りのバックアップ</h2>
+    <ul class="menu-list">
+        <li><a href="/backup_local">📦 お気に入りをバックアップする</a></li>
+        <li><a href="/restore_local">🔄 お気に入りを復元する</a></li>
+    </ul>
+
+    <h2 class="menu-heading">|ω・)ご意見・ご要望</h2>
+    <ul class="menu-list">
+        <li><a href="/request_page">📨 顔文字追加リクエスト / フィードバック</a></li>
+    </ul>
+
+    {% if logged_in %}
+        <h2 class="menu-heading menu-heading-admin">管理者メニュー</h2>
+
+        <ul class="menu-list menu-list-admin">
+            <li><a href="/add">➕ 顔文字を登録</a></li>
+            <li><a href="/edit_select">✎ 顔文字を編集</a></li>
+            <li><a href="/delete_select">🗑 顔文字を削除する</a></li>
+            <li><a href="/favorite">⭐ お気に入り一覧</a></li>
+        </ul>
+
+        <ul class="menu-list menu-list-admin">
+            <li><a href="/request_admin">📨 顔文字追加リクエスト / フィードバックを見る</a></li>
+            <li><a href="/backup_page">📦 バックアップを取る</a></li>
+            <li><a href="/restore_page">🔄 バックアップから復元</a></li>
+        </ul>
+
+        <ul class="menu-list">
+            <li class="menu-logout"><a href="/logout">🚪 ログアウト</a></li>
+        </ul>
+    {% endif %}
+{% endblock %}

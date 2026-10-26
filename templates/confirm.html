@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta charset="UTF-8">
+    <title>登録確認</title>
+</head>
+<body>
+    <h1>この内容で登録しますか？</h1>
+
+    <p><strong>名前:</strong> {{ name }}</p>
+    <p><strong>顔文字:</strong> {{ face }}</p>
+
+    <form action="/confirm" method="POST">
+        <input type="hidden" name="name" value="{{ name }}">
+        <input type="hidden" name="face" value="{{ face }}">
+        <button type="submit" class="btn btn-edit">登録する</button>
+    </form>
+
+    <br>
+    <a href="/add">← 入力画面に戻る</a>
+</body>
+</html>

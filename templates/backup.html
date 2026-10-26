@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}バックアップ - 顔文字辞書{% endblock %}
+
+{% block content %}
+    <h1>バックアップ</h1>
+
+    <a href="/">← メニューに戻る</a>
+    <br><br>
+
+    <h2>データをダウンロード</h2>
+
+    <p>
+        最後のバックアップ日時：
+        {% if backup_info.last_backup %}
+            {{ backup_info.last_backup }}
+        {% else %}
+            まだバックアップされていません
+        {% endif %}
+    </p>
+
+    <form action="/backup" method="post">
+        <p>パスコードを入力してください：</p>
+        <input type="password" name="pin" required>
+
+        <p>
+            ※ バックアップボタンを押すと、バックアップデータ（ZIP）が生成され、バックアップ日時が更新されます。<br>
+            ※ ZIPファイルのダウンロードが正常に完了したかどうかはブラウザ側では確認できないため、ご自身で保存状況をご確認ください。
+        </p>
+
+        <button type="submit" class="btn btn-edit">バックアップ（ZIP）をダウンロード</button>
+    </form>
+{% endblock %}

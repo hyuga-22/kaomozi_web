@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}管理者ログイン - 顔文字辞書{% endblock %}
+
+{% block content %}
+    <div class="login-container">
+        <h2>管理者ログイン</h2>
+
+        {% if error %}
+            <p class="message-error">{{ error }}</p>
+        {% endif %}
+
+        <form action="/login" method="POST">
+            <input type="text" name="username" placeholder="ユーザー名" required>
+            <input type="password" name="password" placeholder="パスワード" required>
+            <button type="submit" class="btn btn-edit">ログイン</button>
+        </form>
+    </div>
+{% endblock %}

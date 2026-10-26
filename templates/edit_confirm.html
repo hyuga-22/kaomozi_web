@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}編集内容の確認 - 顔文字辞書{% endblock %}
+
+{% block content %}
+    <h1>編集内容の確認</h1>
+
+    <p><strong>変更前：</strong></p>
+    <p>名前：{{ old_name }}</p>
+    <p>顔文字：{{ old_face }}</p>
+
+    <hr>
+
+    <p><strong>変更後：</strong></p>
+    <p>名前：{{ new_name }}</p>
+    <p>顔文字：{{ new_face }}</p>
+
+    <br>
+
+    <!-- 編集実行 -->
+    <form action="/edit_apply/{{ old_name }}" method="POST">
+        <input type="hidden" name="new_name" value="{{ new_name }}">
+        <input type="hidden" name="new_face" value="{{ new_face }}">
+        <button type="submit" class="btn btn-edit">はい（編集する）</button>
+    </form>
+
+    <br><br>
+
+    <!-- 戻る -->
+    <a href="/edit/{{ old_name }}">いいえ（戻る）</a>
+{% endblock %}

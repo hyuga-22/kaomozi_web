@@ -1,0 +1,4 @@
+{
+    "username": "ここに管理者ユーザー名",
+    "password": "ここにパスワードのハッシュ（作り方は README / DEPLOY を参照）"
+}

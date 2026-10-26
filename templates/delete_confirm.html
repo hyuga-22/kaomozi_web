@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}顔文字削除確認 - 顔文字辞書{% endblock %}
+
+{% block content %}
+    <h1>この顔文字を削除しますか？</h1>
+
+    <p><strong>名前:</strong> {{ name }}</p>
+    <p><strong>顔文字:</strong> {{ face }}</p>
+
+    <!-- 削除実行 -->
+    <form action="/delete_remove/{{ name }}" method="POST">
+        <button type="submit" class="btn btn-danger">はい（削除する）</button>
+    </form>
+
+    <br><br>
+
+    <!-- 戻る -->
+    <a href="/delete_select">← 削除ページに戻る</a>
+{% endblock %}

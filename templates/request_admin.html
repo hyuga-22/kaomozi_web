@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}リクエスト一覧 - 顔文字辞書{% endblock %}
+
+{% block content %}
+    <h1>リクエスト一覧</h1>
+
+    <a href="/">← メニューに戻る</a>
+    <br><br>
+
+    {% if requests %}
+        <ul>
+        {% for r in requests %}
+            <li>
+                <strong>{{ r.time }}</strong><br>
+                名前：{{ r.name }}<br>
+                顔文字：{{ r.kaomozi }}<br>
+                コメント：{{ r.comment }}<br>
+                評価：{{ r.rating }}<br>
+
+                <!-- 削除ボタン -->
+                <form action="/delete_request/{{ loop.index0 }}" method="post" style="margin-top:10px;">
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('このリクエストを削除しますか？');">
+                        削除
+                    </button>
+                </form>
+            </li>
+            <br>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>リクエストはまだありません。</p>
+    {% endif %}
+{% endblock %}

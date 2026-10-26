@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}お気に入り - 顔文字辞書{% endblock %}
+
+{% block head_extra %}
+    <!-- SortableJS 読み込み -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+{% endblock %}
+
+{% block content %}
+    <h1>お気に入り一覧</h1>
+
+    <!-- メインメニューへ戻る -->
+    <p><a href="/">← メインメニューに戻る</a></p>
+
+    <!-- 検索フォーム -->
+    <input type="text" id="search" placeholder="名前 or 顔文字で検索" style="padding:5px; width: 250px;">
+    <br><br>
+
+    <ul id="favorite-list" class="kaomoji-list">
+        {% for name in favorite["favorites"] %}
+            <li data-name="{{ name }}" data-face="{{ kaomozi[name] }}">
+                <span class="drag-handle" title="ドラッグで並び替え"></span>
+                {{ name }} : {{ kaomozi[name] }}
+                <button class="copy-btn btn">コピー</button>
+
+                {% if logged_in %}
+                    <a href="/favorite/confirm/{{ name }}" class="btn btn-danger">削除</a>
+                {% endif %}
+
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        // 🔍 検索機能
+        const searchInput = document.getElementById("search");
+
+        searchInput.addEventListener("keyup", () => {
+            const keyword = searchInput.value.toLowerCase();
+
+            document.querySelectorAll("#favorite-list li").forEach(li => {
+                const name = li.dataset.name.toLowerCase();
+                const face = li.dataset.face.toLowerCase();
+
+                if (name.includes(keyword) || face.includes(keyword)) {
+                    li.style.display = "";
+                } else {
+                    li.style.display = "none";
+                }
+            });
+        });
+    </script>
+
+    <script>
+        // コピー機能（dataset から安全に取得）
+        document.querySelectorAll(".copy-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                copyToClipboard(btn.parentElement.dataset.face)
+                    .then(() => alert("コピーしました！"))
+                    .catch(() => alert("コピーに失敗しました"));
+            });
+        });
+
+        // 並び替え機能
+        const el = document.getElementById('favorite-list');
+        Sortable.create(el, {
+            handle: '.drag-handle',
+            animation: 150,
+            onEnd: function () {
+                const items = [...el.querySelectorAll('li')].map(li => li.dataset.name);
+
+                fetch("/favorite/reorder", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ order: items })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status !== "ok") {
+                        alert("並び順の保存に失敗しました。");
+                    }
+                })
+                .catch(() => {
+                    alert("並び順の保存中にエラーが発生しました。");
+                });
+            }
+        });
+    </script>
+{% endblock %}

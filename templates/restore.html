@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}データ復元 - 顔文字辞書{% endblock %}
+
+{% block content %}
+    <h1>データ復元</h1>
+
+    <a href="/">← メニューに戻る</a>
+    <br><br>
+
+    <form action="/restore" method="post" enctype="multipart/form-data">
+        <p>バックアップ ZIP を選択してください：</p>
+        <input type="file" name="zipfile" accept=".zip" required>
+
+        <p>復元する項目を選択：</p>
+        <label><input type="checkbox" name="restore_kaomozi" checked> 顔文字辞書（kaomozi.json）</label><br>
+        <label><input type="checkbox" name="restore_order" checked> 並び順（order.json）</label><br>
+        <label><input type="checkbox" name="restore_favorite" checked> お気に入り（favorite.json）</label><br><br>
+
+        <p>パスコードを入力してください：</p>
+        <input type="password" name="pin" required>
+        <br></br>
+        <button type="submit" class="btn btn-edit">復元する</button>
+    </form>
+{% endblock %}
