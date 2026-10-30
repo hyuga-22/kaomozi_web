@@ -844,7 +844,11 @@ def send_request():
     data.append(entry)
     save_requests(data)
 
-    return "送信しました！<br><a href='/'>メニューに戻る</a>"
+    return redirect("/request_done") 
+
+@app.route("/request_done")
+def request_done():
+    return render_template("request_done.html")
 
 
 @app.route("/request_admin")

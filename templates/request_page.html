@@ -12,6 +12,8 @@
         <p class="message-error">{{ error }}</p>
     {% endif %}
 
+    <p>※ 公開デモのため送信内容は保存・確認されません！</p>
+
     <form action="/send_request" method="post" onsubmit="return checkAtLeastOne();">
         <p>追加してほしい顔文字の名称（任意）</p>
         <input type="text" name="name">
