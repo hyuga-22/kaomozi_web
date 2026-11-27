@@ -8,11 +8,16 @@
     <a href="/">← メニューに戻る</a>
     <br><br>
 
+    <div style="padding:12px 16px; margin-bottom:16px; background:var(--favorite-soft); border:1px solid var(--favorite-border); border-radius:var(--radius); color:var(--favorite-text);">
+        ※公開デモのため、この画面から送信した内容は保存・確認されません(一時的に保存され、再起動で消えます)。<br>
+        実際に顔文字リクエスト・フィードバックをお送りいただける場合は、
+        <a href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=BBmszD4prUGMRS1npHGV6Ok3fPgaeWJEmzjrxKo06dNUMVVNUkwzTlFOVVNBSU5BWks1VTMzRUQ2Vy4u" target="_blank" rel="noopener noreferrer">こちらのフォーム（Microsoft Forms）</a>
+        からお願いします。
+    </div>
+
     {% if error %}
         <p class="message-error">{{ error }}</p>
     {% endif %}
-
-    <p>※ デモ公開のため、フィードバックの送信内容は確認されません（一時的に保存され、再起動で消えます）</p>
 
     <form action="/send_request" method="post" onsubmit="return checkAtLeastOne();">
         <p>追加してほしい顔文字の名称（任意）</p>
